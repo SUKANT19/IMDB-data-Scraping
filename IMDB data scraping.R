@@ -1,0 +1,31 @@
+# In this new script we are going to make a table from different pages
+# For making table from different pages we have to make some changes in our previous codes
+
+
+# Firstly we need to write the code for making the loop between the pages
+# Here to make link of different pages we use the for function which means forloop which help to gather dat from different pages
+# We have make one more movie data frame so that result dont show just the last 50 data
+movies = data.frame()
+
+for (page_result in seq(from = 1, to = 51, by = 50)) {
+  link = paste0("https://www.imdb.com/search/title/?title_type=feature&num_votes=25000,&genres=mystery&sort=user_rating,desc&start=", 
+                page_result, "&ref_=adv_nxt")
+  page = read_html(link)
+  
+  name = page %>% html_nodes(".lister-item-header a") %>% html_text()
+  ratings = page %>% html_nodes(".ratings-imdb-rating strong") %>% html_text()
+  year = page %>% html_nodes(".text-muted.unbold") %>% html_text()
+  synopsis = page %>% html_nodes(".ratings-bar+ .text-muted") %>% html_text()
+  runtime = page %>% html_nodes(".runtime") %>% html_text()
+  genre = page %>% html_nodes(".genre") %>% html_text()
+  
+  movies = rbind(movies, data.frame(name, year, genre, ratings, synopsis, runtime, stringsAsFactors = FALSE))
+  
+  print(paste("page:", page_result))
+}
+
+# The codes in first script will just Print the the data of 50 movies precent in first page
+# The codes in second script will print the data of movies prent in 2 pages
+# Here we can change the add more pages data just by changing the numbers in codes
+
+write.csv(movies, "movies.csv")
